@@ -1,3 +1,5 @@
+import catalogoOriginal from './json/productos.json';
+
 function calcularEstado(precioBase, estado) {
     if(estado === "nuevo-precintado") {
         precioBase = precioBase * 1.25;
@@ -35,3 +37,23 @@ function comprobarStockBajo(stock) {
 
     return "";
 }
+
+function cargarCatalogo() {
+    return structuredClone(catalogoOriginal);
+}
+
+let catalogo = cargarCatalogo();
+
+function verCatalogo(catalogo) {
+    return catalogo.map((articulo) => {
+        const precioVenta = calcularEstado(articulo.precioBase, articulo.estadoConservacion);
+        const aviso = comprobarStockBajo(articulo.stock);
+        return `Juego: ${articulo.titulo} | ${articulo.plataforma} | ${articulo.categoria} | ${precioVenta.toFixed(2)}€ | Stock: ${articulo.stock} ${aviso}` 
+    });
+};
+
+console.log("CATÁLOGO ACTUAL");
+
+const lineas = verCatalogo(catalogo);
+
+lineas.forEach((linea) => console.log(linea));
