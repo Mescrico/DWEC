@@ -44,6 +44,8 @@ function cargarCatalogo() {
 
 let catalogo = cargarCatalogo();
 
+let ventasSesion = [];
+
 function verCatalogo(catalogo) {
     return catalogo.map((articulo) => {
         const precioVenta = calcularEstado(articulo.precioBase, articulo.estadoConservacion);
@@ -96,7 +98,11 @@ function registrarVenta(catalogo, juego, cantidad) {
 
     return {
         catalogoActualizado: catalogoActualizado,
-        total: precioFinal
+        venta: {
+            titulo: producto.titulo,
+            cantidad: cantidad,
+            total: precioFinal
+        }
     };
 }
 
@@ -106,7 +112,7 @@ function reponerStock(catalogo, juego, cantidad) {
     if(!producto) {
         console.log("No existe esa id");
         return null;
-    } else if (cantidad < 0) {
+    } else if (cantidad <= 0) {
         console.log("No se puede reponer ese numero de articulos");
         return null;
     }
@@ -116,8 +122,52 @@ function reponerStock(catalogo, juego, cantidad) {
         ? { ...articulo, stock: articulo.stock + cantidad} : articulo
     );
 
+    console.log(`+${cantidad} unidades añadidas a "${producto.titulo}" - Stock total: ${(producto.stock + cantidad)}`);
     return {
         catalogoActualizado: catalogoActualizado
+    };
+}
+
+function informeCaja(catalogo, ventas) {
+    const totalFacturado = ventas.reduce((acc, venta) => acc + venta.total, 0);
+    
+    console.log(`Total facturado ${totalFacturado.toFixed(2)}€`);
+
+    const unidadesVendidasPorJuego = ventas.reduce((acc2, venta) => {
+        acc2[venta.titulo] = (acc2[venta.titulo] || 0) + venta.cantidad;
+        return acc2;
+    }, {});
+
+    const nombresJuegos = Object.keys(unidadesVendidasPorJuego);
+    const juegoMasVendido = nombresJuegos.reduce((ganador, juegoActual) => {
+        if (!ganador || unidadesVendidasPorJuego[juegoActual] > unidadesVendidasPorJuego[ganador]) {
+            return juegoActual;
+        }
+        return ganador;
+    }, "");
+
+    if(juegoMasVendido) {
+        const unidades = unidadesVendidasPorJuego[juegoMasVendido];
+        console.log(`El juego mas vendido es ${juegoMasVendido} con ${unidades}`);
+    } else {
+        console.log(`No hay ninguna venta todavia para saber el juego mas vendido`);
+    }
+
+    const valorStockRestante = catalogo.reduce((acc3, articulo) => {
+        const precioUnitario = calcularEstado(articulo.precioBase, articulo.estadoConservacion);
+        return acc3 + (precioUnitario * articulo.stock);
+    }, 0);
+
+    console.log(`Valor del stock actual ${valorStockRestante.toFixed(2)}`);
+
+    const stockBajo = catalogo.filter((articulo) => articulo.stock < 3);
+    if(stockBajo.length > 0) {
+        console.log(`Hay ${stockBajo.length} productos con bajo stock`);
+        stockBajo.forEach((articulo) => {
+            console.log(`${articulo.titulo} le quedan ${articulo.stock} de stock`);
+        });
+    } else {
+        console.log("Todos los productos tienen stock suficiente");
     };
 }
 
@@ -164,6 +214,7 @@ do {
 
             if(resultadoVender !== null) {
                 catalogo = resultadoVender.catalogoActualizado;
+                ventasSesion.push(resultadoVender.venta)
             };
             break;
         case "4":
@@ -176,6 +227,17 @@ do {
                 catalogo = resultadoReponer.catalogoActualizado;
             };
             break;
-    }       
+        case "5":
+            informeCaja(catalogo, ventasSesion);
+            break;
+        case "6":
+            informeCaja(catalogo, ventasSesion);
+            console.log("Saliendo");
+            salir = true;
+            break;
+        default:
+            console.log("Opcion no valida");
+            break;
+    };
 
 } while(!salir);
