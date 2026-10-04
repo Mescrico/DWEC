@@ -18,7 +18,7 @@ export function calcularEstado(precioBase, estado) {
 export const descuentoVolumen = function(precioNormal, cantidad = 1) {
     let total = precioNormal * cantidad;
 
-    if(cantidad === 2 || cantidad === 3) {
+    if(cantidad >= 2 && cantidad <= 3) {
         total = total * 0.95;
     }
     if(cantidad >= 4) {
@@ -29,9 +29,5 @@ export const descuentoVolumen = function(precioNormal, cantidad = 1) {
 };
 
 export function comprobarStockBajo(stock) {
-    if(stock < 3) {
-        return "⚠ Stock bajo"
-    }
-
-    return "";
+    return stock < 3 ? "⚠ Stock bajo" : "";
 }

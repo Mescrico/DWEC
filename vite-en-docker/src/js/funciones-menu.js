@@ -1,10 +1,10 @@
 import { calcularEstado, descuentoVolumen, comprobarStockBajo } from './regla-de-negocios.js';
 
 export function verCatalogo(catalogo) {
-    return catalogo.map((articulo) => {
-        const precioVenta = calcularEstado(articulo.precioBase, articulo.estadoConservacion);
-        const aviso = comprobarStockBajo(articulo.stock);
-        return `${articulo.id} - Juego: ${articulo.titulo} | ${articulo.plataforma} | ${articulo.categoria} | ${precioVenta.toFixed(2)}€ | Stock: ${articulo.stock} ${aviso}` 
+    return catalogo.map(({ id, titulo, plataforma, categoria, precioBase, estadoConservacion, stock }) => {
+        const precioVenta = calcularEstado(precioBase, estadoConservacion);
+        const aviso = comprobarStockBajo(stock);
+        return `${id} - Juego: ${titulo} | ${plataforma} | ${categoria} | ${precioVenta.toFixed(2)}€ | Stock: ${stock} ${aviso}`;
     });
 };
 
@@ -15,10 +15,15 @@ export function buscarProducto(catalogo, criterioBusqueda) {
 export function registrarVenta(catalogo, juego, cantidad) {
     const producto = catalogo.find((articulo) => articulo.id === juego)
     
+    
     if(!producto) {
         console.log("No existe esa id");
         return null;
-    } else if(cantidad > producto.stock) {
+    } 
+
+    const { id, titulo, precioBase, estadoConservacion, stock } = producto;
+
+    if(cantidad > stock) {
         console.log("No hay stock suficiente");
         return null;
     } else if (cantidad <= 0) {
@@ -26,24 +31,25 @@ export function registrarVenta(catalogo, juego, cantidad) {
         return null;
     };
 
-    const precioUnitario = calcularEstado(producto.precioBase, producto.estadoConservacion);
+    
+    const precioUnitario = calcularEstado(precioBase, estadoConservacion);
     const precioFinal = descuentoVolumen(precioUnitario, cantidad);
 
     const catalogoActualizado = catalogo.map((articulo) => 
-        articulo.id === producto.id 
+        articulo.id === id 
          ? { ...articulo, stock: articulo.stock - cantidad} : articulo
     );
 
     const precioUnitarioFinal = precioFinal / cantidad;
-    console.log(`Venta realizada: ${cantidad}x ${producto.titulo} por ${precioFinal.toFixed(2)}€ - Precio Unitario ${precioUnitario}€, tras descuentos cada uno se queda en ${precioUnitarioFinal.toFixed(2)}€`);
-    if(producto.stock - cantidad < 3) {
+    console.log(`Venta realizada: ${cantidad}x ${titulo} por ${precioFinal.toFixed(2)}€ - Precio Unitario ${precioUnitario}€, tras descuentos cada uno se queda en ${precioUnitarioFinal.toFixed(2)}€`);
+    if(stock - cantidad < 3) {
         console.log("⚠ Stock bajo");
     };
 
     return {
         catalogoActualizado: catalogoActualizado,
         venta: {
-            titulo: producto.titulo,
+            titulo: titulo,
             cantidad: cantidad,
             total: precioFinal
         }

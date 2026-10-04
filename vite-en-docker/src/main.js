@@ -35,7 +35,7 @@ do {
                 break;
             }
 
-            const termino = texto.trim().toLowerCase();
+            const termino = texto.trim()?.toLowerCase() ?? "";
 
             const coincideCriterio = (articulo) => {
                 const coincideId = articulo.id.toString() === termino;
