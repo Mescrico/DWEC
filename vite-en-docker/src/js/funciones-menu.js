@@ -8,19 +8,8 @@ export function verCatalogo(catalogo) {
     });
 };
 
-export function buscarProducto(catalogo, texto) {
-    if(!texto) {
-        return null;
-    }
-
-    const buscar = texto.trim().toLowerCase();
-
-    return catalogo.find((articulo) => {
-        const encontrarID = articulo.id.toString() === buscar;
-        const encontrarTitulo = articulo.titulo.toLowerCase().includes(buscar);
-
-        return encontrarID || encontrarTitulo;
-    });
+export function buscarProducto(catalogo, criterioBusqueda) {
+    return catalogo.find(criterioBusqueda);
 };
 
 export function registrarVenta(catalogo, juego, cantidad) {
@@ -83,7 +72,7 @@ export function reponerStock(catalogo, juego, cantidad) {
     };
 }
 
-export function informeCaja(catalogo, ventas) {
+export function informeCaja(catalogo, ...ventas) {
     const totalFacturado = ventas.reduce((acc, venta) => acc + venta.total, 0);
     
     console.log(`Total facturado ${totalFacturado.toFixed(2)}€`);
@@ -113,7 +102,7 @@ export function informeCaja(catalogo, ventas) {
         return acc3 + (precioUnitario * articulo.stock);
     }, 0);
 
-    console.log(`Valor del stock actual ${valorStockRestante.toFixed(2)}`);
+    console.log(`Valor del stock actual ${valorStockRestante.toFixed(2)}€`);
 
     const stockBajo = catalogo.filter((articulo) => articulo.stock < 3);
     if(stockBajo.length > 0) {
@@ -123,5 +112,15 @@ export function informeCaja(catalogo, ventas) {
         });
     } else {
         console.log("Todos los productos tienen stock suficiente");
+    };
+}
+
+export function crearGestorVentas() {
+    let ventas = [];
+
+    return {
+        agregarVenta: (venta) => ventas.push(venta),
+        obtenerVentas: () => [...ventas],
+        obtenerTotalVentas: () => ventas.length
     };
 }

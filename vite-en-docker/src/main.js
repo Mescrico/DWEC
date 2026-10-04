@@ -1,5 +1,5 @@
 import catalogoOriginal from './json/productos.json';
-import { verCatalogo, buscarProducto, registrarVenta, reponerStock, informeCaja } from './js/funciones-menu';
+import { verCatalogo, buscarProducto, registrarVenta, reponerStock, informeCaja, crearGestorVentas } from './js/funciones-menu';
 
 function cargarCatalogo() {
     return structuredClone(catalogoOriginal);
@@ -7,7 +7,7 @@ function cargarCatalogo() {
 
 let catalogo = cargarCatalogo();
 
-let ventasSesion = [];
+let ventasSesion = crearGestorVentas();
 
 let salir = false;
 do {
@@ -29,18 +29,29 @@ do {
             lineas.forEach((linea) => console.log(linea));
             break;
         case "2":
-            const texto = prompt("Introduce el ID o el nombre del juego");
-            if(texto === null) {
+            const texto = prompt("Introduce el ID o el nombre del juego:");
+            if (!texto) {
                 console.log("Escribe el ID o el nombre del juego");
+                break;
             }
-            const productoEncontrado = buscarProducto(catalogo, texto);
 
-            if(productoEncontrado) {
-               console.log("Juego Encontrado");
-               console.log(verCatalogo([productoEncontrado])); 
-            } else {
-                console.log("No hay ningun juego con esa id o con ese titulo");
+            const termino = texto.trim().toLowerCase();
+
+            const coincideCriterio = (articulo) => {
+                const coincideId = articulo.id.toString() === termino;
+                const coincideTitulo = articulo.titulo.toLowerCase().includes(termino);
+                return coincideId || coincideTitulo;
             };
+
+            const productoEncontrado = buscarProducto(catalogo, coincideCriterio);
+
+            if (productoEncontrado) {
+                console.log("Juego Encontrado:");
+                const lineas = verCatalogo([productoEncontrado]);
+                lineas.forEach((l) => console.log(l));
+            } else {
+                console.log("No hay ningún juego con esa ID o título.");
+            }
             break;
         case "3":
             const idVenta = parseInt(prompt("Introduce el ID del juego a vender:"));
@@ -50,7 +61,7 @@ do {
 
             if(resultadoVender !== null) {
                 catalogo = resultadoVender.catalogoActualizado;
-                ventasSesion.push(resultadoVender.venta)
+                ventasSesion.agregarVenta(resultadoVender.venta)
             };
             break;
         case "4":
@@ -64,10 +75,10 @@ do {
             };
             break;
         case "5":
-            informeCaja(catalogo, ventasSesion);
+            informeCaja(catalogo, ...ventasSesion.obtenerVentas());
             break;
         case "6":
-            informeCaja(catalogo, ventasSesion);
+            informeCaja(catalogo, ...ventasSesion.obtenerVentas());
             console.log("Saliendo");
             salir = true;
             break;

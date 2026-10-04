@@ -15,7 +15,7 @@ export function calcularEstado(precioBase, estado) {
     return precioBase;
 }
 
-export function descuentoVolumen(precioNormal, cantidad) {
+export const descuentoVolumen = function(precioNormal, cantidad = 1) {
     let total = precioNormal * cantidad;
 
     if(cantidad === 2 || cantidad === 3) {
@@ -26,7 +26,7 @@ export function descuentoVolumen(precioNormal, cantidad) {
     }
 
     return total;
-}
+};
 
 export function comprobarStockBajo(stock) {
     if(stock < 3) {
