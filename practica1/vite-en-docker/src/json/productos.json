@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "titulo": "Mortal Kombat 1",
+    "plataforma": "MEGA DRIVE",
+    "categoria": ["Lucha", "Accion"],
+    "precioBase": 35.0,
+    "estadoConservacion": "usado-caja-danada",
+    "stock": 4
+  },
+  {
+    "id": 2,
+    "titulo": "Tetris",
+    "plataforma": "GAME BOY",
+    "categoria": ["Puzzle", "Estrategia"],
+    "precioBase": 15.0,
+    "estadoConservacion": "solo-cartucho",
+    "stock": 8
+  },
+  {
+    "id": 3,
+    "titulo": "Pokemon Rojo",
+    "plataforma": "GAME BOY",
+    "categoria": ["RPG", "Aventura"],
+    "precioBase": 45.0,
+    "estadoConservacion": "solo-cartucho",
+    "stock": 5
+  },
+  {
+    "id": 4,
+    "titulo": "El secreto de Monkey Island",
+    "plataforma": "PC",
+    "categoria": ["Aventura Grafica", "Puzzle"],
+    "precioBase": 40.0,
+    "estadoConservacion": "usado-como-nuevo",
+    "stock": 2
+  },
+  {
+    "id": 5,
+    "titulo": "Sonic the Hedgehog",
+    "plataforma": "MEGA DRIVE",
+    "categoria": ["Plataformas", "Accion"],
+    "precioBase": 25.0,
+    "estadoConservacion": "usado-como-nuevo",
+    "stock": 6
+  },
+  {
+    "id": 6,
+    "titulo": "Counter-Strike",
+    "plataforma": "PC",
+    "categoria": ["Shooter", "Accion"],
+    "precioBase": 20.0,
+    "estadoConservacion": "nuevo-precintado",
+    "stock": 3
+  },
+  {
+    "id": 7,
+    "titulo": "GTA 2",
+    "plataforma": "PS1",
+    "categoria": ["Accion", "Mundo Abierto"],
+    "precioBase": 30.0,
+    "estadoConservacion": "usado-caja-danada",
+    "stock": 3
+  },
+  {
+    "id": 8,
+    "titulo": "Golden Sun",
+    "plataforma": "GAME BOY ADVANCE",
+    "categoria": ["RPG", "Puzzle"],
+    "precioBase": 20.0,
+    "estadoConservacion": "nuevo-precintado",
+    "stock": 6
+  },
+  {
+    "id": 9,
+    "titulo": "Super Mario World",
+    "plataforma": "SNES",
+    "categoria": ["Plataformas", "Aventura"],
+    "precioBase": 40.0,
+    "estadoConservacion": "solo-cartucho",
+    "stock": 7
+  },
+  {
+    "id": 10,
+    "titulo": "Street Fighter II",
+    "plataforma": "SNES",
+    "categoria": ["Lucha", "Arcade"],
+    "precioBase": 35.0,
+    "estadoConservacion": "usado-como-nuevo",
+    "stock": 4
+  },
+  {
+    "id": 11,
+    "titulo": "Gran Turismo 2",
+    "plataforma": "PS1",
+    "categoria": ["Deportes", "Simulacion"],
+    "precioBase": 18.0,
+    "estadoConservacion": "usado-caja-danada",
+    "stock": 5
+  },
+  {
+    "id": 12,
+    "titulo": "Doom",
+    "plataforma": "PC",
+    "categoria": ["Shooter", "Terror"],
+    "precioBase": 35.0,
+    "estadoConservacion": "usado-caja-danada",
+    "stock": 4
+  }
+]

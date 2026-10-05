@@ -1,0 +1,125 @@
+import catalogoOriginal from './json/productos.json';
+import { verCatalogo, buscarProducto, registrarVenta, reponerStock, informeCaja, crearGestorVentas, filtrarCategoria, soloStockBajo } from './js/funciones-menu';
+
+function cargarCatalogo() {
+    return structuredClone(catalogoOriginal);
+}
+
+let catalogo = cargarCatalogo();
+
+let ventasSesion = crearGestorVentas();
+
+let salir = false;
+do {
+    let opcion = prompt(
+        "Menu de opciones:\n" +
+        "1. Ver catálogo\n" +
+        "2. Buscar producto\n" +
+        "3. Registrar una Venta\n" +
+        "4. Reponer Stock\n" +
+        "5. Informe de Caja\n" +
+        "6. Salir\n\n" +
+        "Introduce una opción:"
+    );
+
+    switch (opcion) {
+        case "1":
+            let opcion2 = prompt(
+                "1. Ver catálogo\n" +
+                "2. Filtrar por categoria\n" +
+                "3. Mostrar solo stock bajo\n"
+            );
+            switch (opcion2) {
+                case "1":
+                    console.log("Catálogo:")
+                    const lineas = verCatalogo(catalogo);
+                    lineas.forEach((linea) => console.log(linea));
+                    break;
+                case "2":
+                    let categoria = prompt("Introduce la categoria a buscar: ")
+                    if(categoria === null) {
+                        console.log("Debes poner una categoria");
+                    } else {
+                        let juegosFiltrados = filtrarCategoria(catalogo, categoria);
+                        if(juegosFiltrados.length > 0) {
+                            console.log(`Juegos filtrados por categoria ${categoria}:`);
+                            const lineas = verCatalogo(juegosFiltrados);
+                            lineas.forEach((linea) => console.log(linea));
+                        } else {
+                            console.log("No hay ningun juego para esa categoria");
+                        }
+                    }
+                    break;
+                case "3":
+                    let juegosBajoStock = soloStockBajo(catalogo);
+                    if (juegosBajoStock.length > 0) {
+                        juegosBajoStock.forEach((linea) => console.log(linea));
+                    } else {
+                        console.log("No hay ningún juego con stock bajo");
+                    }
+                    break;
+                default :
+                    console.log("Opcion no valida");
+                    break;
+            }
+            break;
+        case "2":
+            const texto = prompt("Introduce el ID o el nombre del juego:");
+            if (!texto) {
+                console.log("Escribe el ID o el nombre del juego");
+                break;
+            }
+
+            const termino = texto.trim()?.toLowerCase() ?? "";
+
+            const coincideCriterio = (articulo) => {
+                const coincideId = articulo.id.toString() === termino;
+                const coincideTitulo = articulo.titulo.toLowerCase().includes(termino);
+                return coincideId || coincideTitulo;
+            };
+
+            const productoEncontrado = buscarProducto(catalogo, coincideCriterio);
+
+            if (productoEncontrado) {
+                console.log("Juego Encontrado:");
+                const lineas = verCatalogo([productoEncontrado]);
+                lineas.forEach((l) => console.log(l));
+            } else {
+                console.log("No hay ningún juego con esa ID o título.");
+            }
+            break;
+        case "3":
+            const idVenta = parseInt(prompt("Introduce el ID del juego a vender:"));
+            const cantVenta = parseInt(prompt("Introduce la cantidad a vender:"));
+
+            const resultadoVender = registrarVenta(catalogo, idVenta, cantVenta);
+
+            if(resultadoVender !== null) {
+                catalogo = resultadoVender.catalogoActualizado;
+                ventasSesion.agregarVenta(resultadoVender.venta)
+            };
+            break;
+        case "4":
+            const idReponer = parseInt(prompt("Introduce el ID del juego a reponer:"))
+            const cantReponer = parseInt(prompt("Introduce la cantidad a reponer:"))
+
+            const resultadoReponer = reponerStock(catalogo, idReponer, cantReponer);
+            
+            if(resultadoReponer !== null) {
+                catalogo = resultadoReponer.catalogoActualizado;
+            };
+            break;
+        case "5":
+            informeCaja(catalogo, ...ventasSesion.obtenerVentas());
+            break;
+        case "6":
+            informeCaja(catalogo, ...ventasSesion.obtenerVentas());
+            console.log("Saliendo");
+            salir = true;
+            break;
+        default:
+            console.log("Opcion no valida");
+            break;
+    };
+
+} while(!salir);
