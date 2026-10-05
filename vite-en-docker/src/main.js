@@ -1,5 +1,5 @@
 import catalogoOriginal from './json/productos.json';
-import { verCatalogo, buscarProducto, registrarVenta, reponerStock, informeCaja, crearGestorVentas } from './js/funciones-menu';
+import { verCatalogo, buscarProducto, registrarVenta, reponerStock, informeCaja, crearGestorVentas, filtrarCategoria, soloStockBajo } from './js/funciones-menu';
 
 function cargarCatalogo() {
     return structuredClone(catalogoOriginal);
@@ -24,9 +24,44 @@ do {
 
     switch (opcion) {
         case "1":
-            console.log("Catálogo:")
-            const lineas = verCatalogo(catalogo);
-            lineas.forEach((linea) => console.log(linea));
+            let opcion2 = prompt(
+                "1. Ver catálogo\n" +
+                "2. Filtrar por categoria\n" +
+                "3. Mostrar solo stock bajo\n"
+            );
+            switch (opcion2) {
+                case "1":
+                    console.log("Catálogo:")
+                    const lineas = verCatalogo(catalogo);
+                    lineas.forEach((linea) => console.log(linea));
+                    break;
+                case "2":
+                    let categoria = prompt("Introduce la categoria a buscar: ")
+                    if(categoria === null) {
+                        console.log("Debes poner una categoria");
+                    } else {
+                        let juegosFiltrados = filtrarCategoria(catalogo, categoria);
+                        if(juegosFiltrados.length > 0) {
+                            console.log(`Juegos filtrados por categoria ${categoria}:`);
+                            const lineas = verCatalogo(juegosFiltrados);
+                            lineas.forEach((linea) => console.log(linea));
+                        } else {
+                            console.log("No hay ningun juego para esa categoria");
+                        }
+                    }
+                    break;
+                case "3":
+                    let juegosBajoStock = soloStockBajo(catalogo);
+                    if (juegosBajoStock.length > 0) {
+                        juegosBajoStock.forEach((linea) => console.log(linea));
+                    } else {
+                        console.log("No hay ningún juego con stock bajo");
+                    }
+                    break;
+                default :
+                    console.log("Opcion no valida");
+                    break;
+            }
             break;
         case "2":
             const texto = prompt("Introduce el ID o el nombre del juego:");

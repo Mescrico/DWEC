@@ -8,6 +8,32 @@ export function verCatalogo(catalogo) {
     });
 };
 
+export function filtrarCategoria(catalogo, categoria) {
+    const encontrados = [];
+    const busqueda = categoria?.trim().toLowerCase() ?? "";
+    catalogo.forEach((articulo) => {
+        if (Array.isArray(articulo.categoria)) {
+            const coincide = articulo.categoria.some((cat) => 
+                cat?.toLowerCase().includes(busqueda)
+            );
+            if(coincide) {
+                encontrados.push(articulo);
+            };  
+        }
+    })
+    return encontrados;
+}
+
+export function soloStockBajo(catalogo) {
+    return catalogo
+        .filter((articulo) => comprobarStockBajo(articulo.stock) !== "")
+        .map(({ id, titulo, plataforma, categoria, precioBase, estadoConservacion, stock }) => {
+            const precioVenta = calcularEstado(precioBase, estadoConservacion);
+            const aviso = comprobarStockBajo(stock);
+            return `${id} - Juego: ${titulo} | ${plataforma} | ${categoria} | ${precioVenta.toFixed(2)}€ | Stock: ${stock} ${aviso}`;
+        });
+}
+
 export function buscarProducto(catalogo, criterioBusqueda) {
     return catalogo.find(criterioBusqueda);
 };
