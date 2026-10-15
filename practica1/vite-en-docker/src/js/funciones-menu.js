@@ -38,6 +38,31 @@ export function buscarProducto(catalogo, criterioBusqueda) {
     return catalogo.find(criterioBusqueda);
 };
 
+// mostrar para cada producto q porcentaje de stock tiene sobre un maximo de 20 calculado sin guardarlo en el catalogo, despues
+// con el reduce calcular el valor total precioVenta * stock de los productos con stockBajo
+
+export function porcentajeStock(catalogo) {
+    catalogo.forEach((articulo) => {
+        let porcentaje;
+        if(articulo.stock >= 20) {
+            porcentaje = 100;
+        } else {
+            porcentaje = (articulo.stock * 100) / 20;
+        }
+
+        console.log(`El porcentaje de stock de ${articulo.titulo} es ${porcentaje}% `);
+    })
+}
+
+export function valorTotalStockBajo(catalogo) {
+    const valorStockBajo = catalogo.filter((articulo) => comprobarStockBajo(articulo.stock) !== "") .reduce((accStock, articulo) => {
+        const precioUnitario = calcularEstado(articulo.precioBase, articulo.estadoConservacion);
+        return accStock + (precioUnitario * articulo.stock);
+    }, 0);
+    console.log(valorStockBajo);
+    return valorStockBajo;
+}
+
 export function registrarVenta(catalogo, juego, cantidad) {
     const producto = catalogo.find((articulo) => articulo.id === juego)
     

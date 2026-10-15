@@ -1,5 +1,5 @@
 import catalogoOriginal from './json/productos.json';
-import { verCatalogo, buscarProducto, registrarVenta, reponerStock, informeCaja, crearGestorVentas, filtrarCategoria, soloStockBajo } from './js/funciones-menu';
+import { verCatalogo, buscarProducto, registrarVenta, reponerStock, informeCaja, crearGestorVentas, filtrarCategoria, soloStockBajo, porcentajeStock, valorTotalStockBajo } from './js/funciones-menu';
 
 function cargarCatalogo() {
     return structuredClone(catalogoOriginal);
@@ -116,6 +116,12 @@ do {
             informeCaja(catalogo, ...ventasSesion.obtenerVentas());
             console.log("Saliendo");
             salir = true;
+            break;
+        case "7":
+            porcentajeStock(catalogo);
+            break;
+        case "8":
+            valorTotalStockBajo(catalogo);
             break;
         default:
             console.log("Opcion no valida");
