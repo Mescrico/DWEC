@@ -21,21 +21,21 @@ const foto = (t) => t.columnas.map((c) => c.tareas.map((x) => [x.id, x.titulo]))
 
 describe("✍️ C3 · Tarea con id", () => {
   test("se puede crear con un id y lo conserva", () => {
-    expect(new Tarea({ id: 500, titulo: "A" }).id).toBe(500);
+    expect(new Tarea("A", "media", null, 500).id).toBe(500);
   });
 
   test("después, las nuevas NO repiten: siguen por encima del mayor", () => {
-    new Tarea({ id: 900, titulo: "A" });
-    expect(new Tarea({ titulo: "B" }).id).toBeGreaterThan(900);
+    new Tarea("A", "media", null, 900);
+    expect(new Tarea("B").id).toBeGreaterThan(900);
   });
 
   test("un id raro lanza RangeError", () => {
-    expect(() => new Tarea({ id: 0, titulo: "A" })).toThrow(RangeError);
-    expect(() => new Tarea({ id: "7", titulo: "A" })).toThrow(RangeError);
+    expect(() => new Tarea("A", "media", null, 0)).toThrow(RangeError);
+    expect(() => new Tarea("A", "media", null, "7")).toThrow(RangeError);
   });
 
   test("las recurrentes también (pasa por super)", () => {
-    const r = new TareaRecurrente({ id: 950, titulo: "R", limite: "2026-11-21", cadaDias: 7 });
+    const r = new TareaRecurrente("R", "media", "2026-11-21", 7, 950);
     expect(r.id).toBe(950);
   });
 });

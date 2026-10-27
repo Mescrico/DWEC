@@ -18,7 +18,7 @@ describe("👀 C0 · fechaATexto (ejemplo resuelto)", () => {
 
 describe("👀 C0 · aDatos (ejemplo resuelto)", () => {
   test("una tarea → objeto plano con id, titulo, prioridad y limite en texto", () => {
-    const t = new Tarea({ titulo: "Entregar", prioridad: "alta", limite: "2026-11-25" });
+    const t = new Tarea("Entregar", "alta", "2026-11-25");
     expect(aDatos(t)).toEqual({
       id: t.id,
       titulo: "Entregar",
@@ -28,16 +28,16 @@ describe("👀 C0 · aDatos (ejemplo resuelto)", () => {
   });
 
   test("sin límite → limite: null", () => {
-    expect(aDatos(new Tarea({ titulo: "A" })).limite).toBeNull();
+    expect(aDatos(new Tarea("A")).limite).toBeNull();
   });
 
   test("una recurrente lleva además cadaDias", () => {
-    const r = new TareaRecurrente({ titulo: "Regar", limite: "2026-11-21", cadaDias: 3 });
+    const r = new TareaRecurrente("Regar", "media", "2026-11-21", 3);
     expect(aDatos(r)).toMatchObject({ titulo: "Regar", limite: "2026-11-21", cadaDias: 3 });
   });
 
   test("el resultado sobrevive a JSON (JSON.stringify de la tarea a secas daría {})", () => {
-    const t = new Tarea({ titulo: "Probar", limite: "2026-11-25" });
+    const t = new Tarea("Probar", "media", "2026-11-25");
     expect(JSON.stringify(t)).not.toContain("Probar"); // los # no se ven
     expect(JSON.parse(JSON.stringify(aDatos(t)))).toEqual(aDatos(t));
   });
@@ -64,12 +64,7 @@ describe("✍️ C1 · desdeDatos", () => {
   });
 
   test("ida y vuelta: aDatos → JSON → desdeDatos da la misma tarea", () => {
-    const original = new TareaRecurrente({
-      titulo: "Copia",
-      prioridad: "baja",
-      limite: "2026-11-30",
-      cadaDias: 7,
-    });
+    const original = new TareaRecurrente("Copia", "baja", "2026-11-30", 7);
     const copia = desdeDatos(JSON.parse(JSON.stringify(aDatos(original))));
     expect(aDatos(copia)).toMatchObject({
       titulo: "Copia",

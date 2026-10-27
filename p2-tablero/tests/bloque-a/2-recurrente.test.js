@@ -2,8 +2,7 @@ import { describe, expect, test } from "vitest";
 import { Tarea } from "../../src/modelo/Tarea.js";
 import { TareaRecurrente } from "../../src/modelo/TareaRecurrente.js";
 
-const semanal = () =>
-  new TareaRecurrente({ titulo: "Sacar la basura", limite: "2026-10-23", cadaDias: 7 });
+const semanal = () => new TareaRecurrente("Sacar la basura", "media", "2026-10-23", 7);
 
 describe("✍️ A1 · TareaRecurrente extends Tarea", () => {
   test("es una Tarea (herencia de verdad)", () => {
@@ -17,19 +16,13 @@ describe("✍️ A1 · TareaRecurrente extends Tarea", () => {
     const t = semanal();
     expect(t.cadaDias).toBe(7);
     expect(t.prioridad).toBe("media");
-    expect(() => new TareaRecurrente({ titulo: "", limite: "2026-10-23", cadaDias: 7 })).toThrow(
-      TypeError,
-    );
+    expect(() => new TareaRecurrente("", "media", "2026-10-23", 7)).toThrow(TypeError);
   });
 
   test("cadaDias tiene que ser un entero ≥ 1, y hace falta límite", () => {
-    expect(() => new TareaRecurrente({ titulo: "A", limite: "2026-10-23", cadaDias: 0 })).toThrow(
-      RangeError,
-    );
-    expect(() => new TareaRecurrente({ titulo: "A", limite: "2026-10-23", cadaDias: 1.5 })).toThrow(
-      RangeError,
-    );
-    expect(() => new TareaRecurrente({ titulo: "A", cadaDias: 3 })).toThrow(TypeError);
+    expect(() => new TareaRecurrente("A", "media", "2026-10-23", 0)).toThrow(RangeError);
+    expect(() => new TareaRecurrente("A", "media", "2026-10-23", 1.5)).toThrow(RangeError);
+    expect(() => new TareaRecurrente("A", "media", null, 3)).toThrow(TypeError);
   });
 
   test("siguiente(): una tarea NUEVA igual, con el límite N días después", () => {
@@ -44,13 +37,13 @@ describe("✍️ A1 · TareaRecurrente extends Tarea", () => {
   });
 
   test("siguiente() cruza bien de mes (Date lo hace por ti)", () => {
-    const t = new TareaRecurrente({ titulo: "Factura", limite: "2026-10-28", cadaDias: 7 });
+    const t = new TareaRecurrente("Factura", "media", "2026-10-28", 7);
     const s = t.siguiente();
     expect([s.limite.getDate(), s.limite.getMonth() + 1]).toEqual([4, 11]);
   });
 
   test("polimorfismo: alCompletar() de una normal no da nada; de una recurrente, la siguiente", () => {
-    expect(new Tarea({ titulo: "A" }).alCompletar()).toEqual([]);
+    expect(new Tarea("A").alCompletar()).toEqual([]);
     const nuevas = semanal().alCompletar();
     expect(nuevas).toHaveLength(1);
     expect(nuevas[0]).toBeInstanceOf(TareaRecurrente);

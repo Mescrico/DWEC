@@ -5,14 +5,14 @@ import { crearTarjeta, pintarLista } from "../../src/ui/tarjeta.js";
 
 const HOY = new Date(2026, 10, 6);
 const tareas = () => [
-  new Tarea({ titulo: "Uno", prioridad: "alta", limite: "2026-11-01" }),
-  new Tarea({ titulo: "Dos" }),
-  new Tarea({ titulo: "Tres", prioridad: "baja" }),
+  new Tarea("Uno", "alta", "2026-11-01"),
+  new Tarea("Dos"),
+  new Tarea("Tres", "baja"),
 ];
 
 describe("👀 B0 · crearTarjeta (ejemplo resuelto)", () => {
   test("un <article class='tarjeta'> con data-id, su prioridad y su título", () => {
-    const t = new Tarea({ titulo: "Probar", prioridad: "alta" });
+    const t = new Tarea("Probar", "alta");
     const tarjeta = crearTarjeta(t, HOY);
     expect(tarjeta.tagName).toBe("ARTICLE");
     expect(tarjeta.classList.contains("tarjeta")).toBe(true);
@@ -28,7 +28,7 @@ describe("👀 B0 · crearTarjeta (ejemplo resuelto)", () => {
   });
 
   test("el título se escribe como texto: el HTML del usuario no se ejecuta", () => {
-    const t = new Tarea({ titulo: '<img src="x" onerror="alert(1)">' });
+    const t = new Tarea('<img src="x" onerror="alert(1)">');
     const tarjeta = crearTarjeta(t, HOY);
     expect(tarjeta.querySelector("img")).toBeNull();
     expect(tarjeta.querySelector("h3").textContent).toContain("<img");

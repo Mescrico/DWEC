@@ -25,7 +25,8 @@ export class Tablero {
   // get columnas: array con las tres columnas, en orden
 
   // crearTarea(datos): TareaRecurrente si datos trae cadaDias, Tarea si no → a «Por hacer»
-  //   y la devuelve
+  //   y la devuelve. datos es un objeto { titulo, prioridad, limite, cadaDias }: saca cada campo
+  //   y pásaselo al constructor, en su orden (new Tarea(datos) NO vale: espera el título)
 
   // buscar(id): la tarea, esté en la columna que esté, o null
   // dondeEsta(id): la Columna donde está, o null

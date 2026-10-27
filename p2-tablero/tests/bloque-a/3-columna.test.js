@@ -2,8 +2,7 @@ import { describe, expect, test } from "vitest";
 import { Columna } from "../../src/modelo/Columna.js";
 import { Tarea } from "../../src/modelo/Tarea.js";
 
-const tarea = (titulo, prioridad = "media", limite = null) =>
-  new Tarea({ titulo, prioridad, limite });
+const tarea = (titulo, prioridad = "media", limite = null) => new Tarea(titulo, prioridad, limite);
 
 describe("✍️ A2 · Columna", () => {
   test("se crea con nombre y, si quieres, un límite WIP", () => {

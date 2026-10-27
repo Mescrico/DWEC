@@ -14,8 +14,10 @@ export class Tarea {
   #titulo;
   #prioridad;
 
-  // (Bloque C · ✍️ C3: aquí aceptarás también un id, para recuperar las tareas guardadas)
-  constructor({ titulo, prioridad = "media", limite = null }) {
+  // new Tarea("Preparar la demo", "alta", "2026-11-05") · new Tarea("Escribir el README")
+  // Los parámetros con = tienen valor por defecto: si no los pasas, prioridad "media" y sin límite.
+  // (Bloque C · ✍️ C3: aquí añadirás un cuarto parámetro, el id, para recuperar las tareas guardadas)
+  constructor(titulo, prioridad = "media", limite = null) {
     this.id = Tarea.#siguienteId++;
     this.titulo = titulo; // pasa por el setter: se valida también al crear
     this.prioridad = prioridad;
