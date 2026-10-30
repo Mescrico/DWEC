@@ -19,7 +19,7 @@ export class ErrorTablero extends Error{
 export class ColumnaLlenaError extends ErrorTablero{
     constructor(columna) {
         const nombre = columna.nombre;
-        const limite = columna.limite;
+        const limite = columna.limiteWip;
 
         const mensaje = `«${nombre}» está llena (máximo ${limite})`;
 

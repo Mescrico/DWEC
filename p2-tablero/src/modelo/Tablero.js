@@ -99,8 +99,16 @@ export class Tablero {
 
     const columnaDestino = this.columna(destino);
 
+    if(columnaAnterior.nombre === "Hecho"){
+      throw new MovimientoNoPermitidoError(id, columnaAnterior.nombre, destino);
+    }
+
+    if(columnaAnterior.nombre === destino) {
+      throw new MovimientoNoPermitidoError(id, columnaAnterior.nombre, destino)
+    }
+
     if(columnaDestino.llena) {
-      throw new Error("La columna de destino esta llena");
+      throw new ColumnaLlenaError(columnaDestino);
     }
 
     const tarea = this.buscar(id);
