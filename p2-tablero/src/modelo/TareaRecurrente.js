@@ -12,7 +12,11 @@ export class TareaRecurrente extends Tarea {
     super(titulo, prioridad, limite);
     // 3 · cadaDias tiene que ser un entero ≥ 1 → si no, RangeError.
     //     Pista: Number.isInteger
+
+    // Hago la condicion de que si cadaDias no es un entero o es menor que uno me salga error
     if (!Number.isInteger(cadaDias) || cadaDias < 1) throw new RangeError(); 
+
+
     // 4 · Una recurrente sin límite no tiene sentido → si this.limite es null, TypeError.
     if (this.limite === null) throw new TypeError();
     // 5 · Guarda this.cadaDias.
@@ -23,8 +27,11 @@ export class TareaRecurrente extends Tarea {
   //     y el límite cadaDias días después. ⚠️ Sin tocar this.limite: copia la fecha primero.
   //     Pista: const limite = new Date(this.limite); limite.setDate(limite.getDate() + …)
   siguiente() {
+    //Guardo la fecha del limite primero
     const limite = new Date(this.limite);
+    //Y luego cambio el limite sumandole cadaDias
     limite.setDate(limite.getDate() + this.cadaDias);
+    //Returneo la TareaRecurrente
     return new TareaRecurrente(this.titulo, this.prioridad, limite, this.cadaDias);
   }
   // 7 · Sobrescribe alCompletar(): en vez de [], devuelve [la siguiente].
