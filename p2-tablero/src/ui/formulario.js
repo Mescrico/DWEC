@@ -24,5 +24,18 @@ export function leerFormulario(form) {
 //   - Si no lo tiene: <p> vacío y SIN aria-invalid (removeAttribute)
 //   Pista: p.dataset.errorDe es el nombre del campo (data-error-de → dataset.errorDe)
 export function mostrarErrores(form, errores) {
-  throw new Error("Sin hacer");
+  const lista = form.querySelectorAll('p[data-error-de]');
+
+  for(const linea of lista) {
+    let campo = linea.dataset.errorDe;
+
+    if(errores[campo]) {
+      linea.textContent = errores[campo]
+      form.elements[campo].setAttribute("aria-invalid", true);
+    } else {
+      linea.textContent = "";
+      form.elements[campo].removeAttribute("aria-invalid");
+    }
+  }
+
 }
