@@ -43,7 +43,52 @@ export function iniciarApp(raiz, tablero, { hoy = null, alCambiar = () => {} } =
   //   - [data-dato="vencidas"]: las vencidas de tablero.resumen(ahora)
   //   La fecha de hoy: const ahora = hoy ?? new Date();  (los tests pasan una fija)
   function pintar() {
-    throw new Error("Sin hacer");
+    const ahora = hoy ?? new Date();
+    const listaColumnas = columnas.querySelectorAll('[data-columna]');
+
+    for(const columna of listaColumnas) {
+      const nombre = columna.dataset.columna;
+      const contenedorLista = columna.querySelector('.lista');
+      const columnaObjeto = tablero.columna(nombre);
+      const tareasOrdenadas = columnaObjeto.ordenadas();
+
+      pintarLista(contenedorLista, tareasOrdenadas, ahora);
+
+      const contadorElemento = columna.querySelector('.contador');
+      const n = tareasOrdenadas.length
+      if(columnaObjeto.limiteWip) {
+        contadorElemento.textContent = `(${n}/${columnaObjeto.limiteWip})`;
+      } else {
+        contadorElemento.textContent = `(${n})`;
+      }
+
+      const contenedorTarjetas = contenedorLista.querySelectorAll('.tarjeta');
+      const accionesPermitidas = ACCIONES[nombre];
+
+      for(const tarjeta of contenedorTarjetas) {
+        for(const [texto, accion] of accionesPermitidas) {
+          const boton = document.createElement("button");
+          boton.type = "button";
+          boton.dataset.accion = accion;
+          boton.textContent = texto;
+          tarjeta.append(boton)     
+        }
+      }
+    }
+
+    const resumen = tablero.resumen(ahora);
+    const total = resumen.porHacer + resumen.enCurso + resumen.hecho;
+    const hechas = resumen.hecho;
+    let porcentaje = 0;
+    if(total > 0) {
+      porcentaje = Math.round((hechas / total)*100, 2);
+    }
+
+    const progresoElemento = raiz.querySelector('[data-dato="progreso"]');
+    const vencidasElemento = raiz.querySelector('[data-dato="vencidas"]');
+
+    progresoElemento.textContent = `${porcentaje} %`;
+    vencidasElemento.textContent = `${resumen.vencidas}`;
   }
 
   // 👀 Resuelto: avisar("texto") enseña el aviso; avisar("") lo esconde
