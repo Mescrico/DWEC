@@ -27,7 +27,7 @@ export function mostrarErrores(form, errores) {
   const lista = form.querySelectorAll('p[data-error-de]');
 
   for(const linea of lista) {
-    let campo = linea.dataset.errorDe;
+    const campo = linea.dataset.errorDe;
 
     if(errores[campo]) {
       linea.textContent = errores[campo]
