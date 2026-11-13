@@ -21,7 +21,20 @@ const ACCIONES = {
 //   - cadaDias (si viene): entero mayor que 0. Si es correcto pero no hay limite, el error va
 //     en «limite»: una tarea que se repite necesita fecha límite
 export function validar(datos) {
-  throw new Error("Sin hacer");
+  const errores = {};
+  if(!datos.titulo || datos.titulo.length > 80) {
+    errores["titulo"] = "No se puede dejar el titulo vacio ni ser mayor de 80 caracteres";
+  }
+  if(datos.cadaDias !== undefined && datos.cadaDias !== null) {
+    if(Number.isInteger(datos.cadaDias) && datos.cadaDias > 0) {
+      if(!datos.limite) {
+        errores["limite"] = "Una tarea que se repite necesita fecha límite";
+      }
+    } else if(!Number.isInteger(datos.cadaDias) || datos.cadaDias <= 0){
+      errores["cadaDias"] = "Tiene que ser un numero entero mayor que 0";
+    }
+  }
+  return errores;
 }
 
 /**
