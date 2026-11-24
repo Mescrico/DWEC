@@ -8,16 +8,16 @@
 export function delegar(contenedor, tipo, selector, manejador) {
   const listener = (evento) => {
     const boton = evento.target.closest(selector);
-    if(!boton) {
+    if (!boton) {
       return;
     }
-    if(contenedor.contains(boton)) {
-      manejador(boton, evento)
+    if (contenedor.contains(boton)) {
+      manejador(boton, evento);
     }
-  }
-  contenedor.addEventListener(tipo, listener)
+  };
+  contenedor.addEventListener(tipo, listener);
 
-  return function() {
-    contenedor.removeEventListener(tipo, listener)
-  }
+  return function () {
+    contenedor.removeEventListener(tipo, listener);
+  };
 }

@@ -22,15 +22,15 @@ const ACCIONES = {
 //     en «limite»: una tarea que se repite necesita fecha límite
 export function validar(datos) {
   const errores = {};
-  if(!datos.titulo || datos.titulo.length > 80) {
+  if (!datos.titulo || datos.titulo.length > 80) {
     errores["titulo"] = "No se puede dejar el titulo vacio ni ser mayor de 80 caracteres";
   }
-  if(datos.cadaDias !== undefined && datos.cadaDias !== null) {
-    if(Number.isInteger(datos.cadaDias) && datos.cadaDias > 0) {
-      if(!datos.limite) {
+  if (datos.cadaDias !== undefined && datos.cadaDias !== null) {
+    if (Number.isInteger(datos.cadaDias) && datos.cadaDias > 0) {
+      if (!datos.limite) {
         errores["limite"] = "Una tarea que se repite necesita fecha límite";
       }
-    } else if(!Number.isInteger(datos.cadaDias) || datos.cadaDias <= 0){
+    } else if (!Number.isInteger(datos.cadaDias) || datos.cadaDias <= 0) {
       errores["cadaDias"] = "Tiene que ser un numero entero mayor que 0";
     }
   }
@@ -57,34 +57,34 @@ export function iniciarApp(raiz, tablero, { hoy = null, alCambiar = () => {} } =
   //   La fecha de hoy: const ahora = hoy ?? new Date();  (los tests pasan una fija)
   function pintar() {
     const ahora = hoy ?? new Date();
-    const listaColumnas = columnas.querySelectorAll('[data-columna]');
+    const listaColumnas = columnas.querySelectorAll("[data-columna]");
 
-    for(const columna of listaColumnas) {
+    for (const columna of listaColumnas) {
       const nombre = columna.dataset.columna;
-      const contenedorLista = columna.querySelector('.lista');
+      const contenedorLista = columna.querySelector(".lista");
       const columnaObjeto = tablero.columna(nombre);
       const tareasOrdenadas = columnaObjeto.ordenadas();
 
       pintarLista(contenedorLista, tareasOrdenadas, ahora);
 
-      const contadorElemento = columna.querySelector('.contador');
-      const n = tareasOrdenadas.length
-      if(columnaObjeto.limiteWip) {
+      const contadorElemento = columna.querySelector(".contador");
+      const n = tareasOrdenadas.length;
+      if (columnaObjeto.limiteWip) {
         contadorElemento.textContent = `(${n}/${columnaObjeto.limiteWip})`;
       } else {
         contadorElemento.textContent = `(${n})`;
       }
 
-      const contenedorTarjetas = contenedorLista.querySelectorAll('.tarjeta');
+      const contenedorTarjetas = contenedorLista.querySelectorAll(".tarjeta");
       const accionesPermitidas = ACCIONES[nombre];
 
-      for(const tarjeta of contenedorTarjetas) {
-        for(const [texto, accion] of accionesPermitidas) {
+      for (const tarjeta of contenedorTarjetas) {
+        for (const [texto, accion] of accionesPermitidas) {
           const boton = document.createElement("button");
           boton.type = "button";
           boton.dataset.accion = accion;
           boton.textContent = texto;
-          tarjeta.append(boton)     
+          tarjeta.append(boton);
         }
       }
     }
@@ -93,8 +93,8 @@ export function iniciarApp(raiz, tablero, { hoy = null, alCambiar = () => {} } =
     const total = resumen.porHacer + resumen.enCurso + resumen.hecho;
     const hechas = resumen.hecho;
     let porcentaje = 0;
-    if(total > 0) {
-      porcentaje = Math.round((hechas / total)*100, 2);
+    if (total > 0) {
+      porcentaje = Math.round((hechas / total) * 100, 2);
     }
 
     const progresoElemento = raiz.querySelector('[data-dato="progreso"]');
@@ -137,7 +137,6 @@ export function iniciarApp(raiz, tablero, { hoy = null, alCambiar = () => {} } =
       avisar("");
       pintar();
       alCambiar(tablero);
-
     } catch (error) {
       if (error instanceof ErrorTablero) {
         avisar(error.message);
@@ -153,14 +152,14 @@ export function iniciarApp(raiz, tablero, { hoy = null, alCambiar = () => {} } =
     const datos = leerFormulario(form);
     const errores = validar(datos);
     mostrarErrores(form, errores);
-    if(Object.keys(errores).length === 0) {
-      tablero.columna("Por hacer").añadir(tablero.crearTarea(datos));  
+    if (Object.keys(errores).length === 0) {
+      tablero.columna("Por hacer").añadir(tablero.crearTarea(datos));
       form.reset();
     }
     avisar("");
     pintar();
     alCambiar(tablero);
-  })
+  });
   pintar();
   return { pintar };
 }

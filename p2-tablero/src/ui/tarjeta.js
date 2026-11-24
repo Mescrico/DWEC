@@ -33,8 +33,7 @@ export function pintarLista(contenedor, tareas, hoy = new Date()) {
     return;
   }
 
-  for(const tarea of tareas) {
+  for (const tarea of tareas) {
     contenedor.append(crearTarjeta(tarea, hoy));
   }
-
 }

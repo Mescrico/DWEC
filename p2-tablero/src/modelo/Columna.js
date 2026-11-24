@@ -12,9 +12,10 @@ export class Columna {
     //     limiteWip: null (sin límite) o un entero ≥ 1 → si no, RangeError
 
     //Comparo el tipo de variable de nombre y tambien lo trimeo para ver si lanzo el error
-    if(typeof nombre !== "string" || nombre.trim() === "") throw new TypeError();
+    if (typeof nombre !== "string" || nombre.trim() === "") throw new TypeError();
     //Si limite no es null y limiteWip no es un entero o limite es menor que uno lanzo el error
-    if(limiteWip !== null && (!Number.isInteger(limiteWip) || limiteWip < 1)) throw new RangeError();
+    if (limiteWip !== null && (!Number.isInteger(limiteWip) || limiteWip < 1))
+      throw new RangeError();
 
     this.nombre = nombre.trim();
     this.limiteWip = limiteWip;
@@ -36,44 +37,42 @@ export class Columna {
   añadir(tarea) {
     //Si tarea no es del tipo Tarea da error
     if (!(tarea instanceof Tarea)) throw new TypeError();
-    
+
     //Si la columna esta llena da error
-    if (this.llena) throw new Error("Está llena") 
-    
-    //Guardamos la tarea en el array de tareas  
+    if (this.llena) throw new Error("Está llena");
+
+    //Guardamos la tarea en el array de tareas
     this.#tareas.push(tarea);
     return tarea;
   }
   // 5 · quitar(id): la saca del array y la devuelve · Error («… no está …») si no la encuentra
   //     Pista: findIndex + splice
   quitar(id) {
-
     //Guardamos el indice que es el id de la tarea
-    const indice = this.#tareas.findIndex(t => t.id === id);
+    const indice = this.#tareas.findIndex((t) => t.id === id);
 
     //Si el indice es -1 es porque no lo ha encontrado asi que lanzamos error
     if (indice === -1) {
       throw new Error("La tarea no está en la columna");
     }
-    
+
     //Modifico el array usando splice que borra desde el primer parametro y el segundo parametro es la cantidad de elementos a borrar a partir de esa posicion
     //Splice al borrar devuelve un array con los elementos que ha borrado asi que lo guardo en una variable y le pongo [] para que me guarde el objeto tarea y no la lista
     const [tareaEliminada] = this.#tareas.splice(indice, 1);
     return tareaEliminada;
-    
   }
   // 6 · tiene(id): true / false. Pista: some
   tiene(id) {
-    return this.#tareas.some(t => t.id === id);
+    return this.#tareas.some((t) => t.id === id);
   }
   // 7 · ordenadas(): un array NUEVO ordenado: primero prioridad alta (usa t.peso), y a igual
   //     prioridad, el límite más cercano; las que no tienen límite, al final.
   //     Pista: [...this.#tareas].sort((a, b) => …) — ¿por qué la copia?
-  ordenadas(){
+  ordenadas() {
     //Devuelvo un array nuevo ordenando por prioridad alta y si tiene la misma prioridad por el limite mas cercano
     return [...this.#tareas].sort((a, b) => {
       //Si los pesos son distintos devuelvo la diferencia que hara que se ponga antes a o b
-      if(b.peso !== a.peso) {
+      if (b.peso !== a.peso) {
         return b.peso - a.peso;
       }
 

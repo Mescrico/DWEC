@@ -14,8 +14,7 @@ export class TareaRecurrente extends Tarea {
     //     Pista: Number.isInteger
 
     // Hago la condicion de que si cadaDias no es un entero o es menor que uno me salga error
-    if (!Number.isInteger(cadaDias) || cadaDias < 1) throw new RangeError(); 
-
+    if (!Number.isInteger(cadaDias) || cadaDias < 1) throw new RangeError();
 
     // 4 · Una recurrente sin límite no tiene sentido → si this.limite es null, TypeError.
     if (this.limite === null) throw new TypeError();
