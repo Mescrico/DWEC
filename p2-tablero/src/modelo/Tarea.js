@@ -24,7 +24,10 @@ export class Tarea {
       throw new RangeError(`Numero no valido`)
     } else {
       this.id = id;
-      Tarea.#siguienteId = id+1;
+      if(id+1 > Tarea.#siguienteId) {
+        Tarea.#siguienteId = id+1;
+      }
+      
     }
     
     
