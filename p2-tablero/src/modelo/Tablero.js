@@ -2,10 +2,11 @@
 // En el bloque C volverás aquí para ✍️ C4 (toJSON y desdeJSON).
 // El tablero TIENE tres columnas: es composición, no hereda de nadie.
 import { Columna } from "./Columna.js";
-import { ColumnaLlenaError, MovimientoNoPermitidoError } from "./errores.js";
+import { ColumnaLlenaError, FaltaMaterialError, MovimientoNoPermitidoError } from "./errores.js";
 import { Tarea } from "./Tarea.js";
 import { TareaRecurrente } from "./TareaRecurrente.js";
 import { aDatos, desdeDatos } from "./serializar.js";
+import { TareaConMateriales } from "./TareaConMateriales.js";
 
 export class Tablero {
   static COLUMNAS = Object.freeze(["Por hacer", "En curso", "Hecho"]);
@@ -68,10 +69,13 @@ export class Tablero {
     if ("cadaDias" in datos) {
       //Creo una TareaRecurrente y la devolvemos
       return new TareaRecurrente(titulo, prioridad, limite, cadaDias);
+    } else if ("materiales" in datos) {
+      return new TareaConMateriales(titulo, prioridad, limite, datos.materiales)
     } else {
       //Sino creo una Tarea y la devuelvo
       return new Tarea(titulo, prioridad, limite);
     }
+    
   }
 
   // buscar(id): la tarea, esté en la columna que esté, o null
@@ -135,6 +139,19 @@ export class Tablero {
     //Guardo la tarea buscandola en todo el tablero para cuando la quite ya tenerla guardada
     const tarea = this.buscar(id);
 
+    if (tarea.materiales) {
+      const materiales = tarea.materiales;
+      const materialesSinUnidades = []
+      for(const material of materiales) {
+        const { nombre, unidades } = materiales.get(material)
+        if(unidades <= 0) {
+          materialesSinUnidades.push(nombre)
+        }
+      }
+      if(materialesSinUnidades.length() !== 0 ) {
+        throw new FaltaMaterialError(materialesSinUnidades)
+      }
+    }
     //Quito de la columna anterior la tarea usando el id
     columnaAnterior.quitar(id);
 

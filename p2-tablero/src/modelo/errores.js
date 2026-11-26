@@ -41,3 +41,12 @@ export class MovimientoNoPermitidoError extends ErrorTablero {
     this.hasta = hasta;
   }
 }
+
+export class FaltaMaterialError extends ErrorTablero {
+  constructor(materiales) {
+    const mensaje = `Faltan materiales: ${materiales}`
+
+    super(mensaje);
+    this.materiales = materiales
+  }
+}
