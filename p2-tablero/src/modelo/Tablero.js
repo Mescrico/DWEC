@@ -139,19 +139,7 @@ export class Tablero {
     //Guardo la tarea buscandola en todo el tablero para cuando la quite ya tenerla guardada
     const tarea = this.buscar(id);
 
-    if (tarea.materiales) {
-      const materiales = tarea.materiales;
-      const materialesSinUnidades = []
-      for(const material of materiales) {
-        const { nombre, unidades } = materiales.get(material)
-        if(unidades <= 0) {
-          materialesSinUnidades.push(nombre)
-        }
-      }
-      if(materialesSinUnidades.length() !== 0 ) {
-        throw new FaltaMaterialError(materialesSinUnidades)
-      }
-    }
+    tarea.comprobarPaso(origin.nombre, destino);
     //Quito de la columna anterior la tarea usando el id
     columnaAnterior.quitar(id);
 
