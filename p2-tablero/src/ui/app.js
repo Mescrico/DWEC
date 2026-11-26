@@ -86,9 +86,9 @@ export function iniciarApp(raiz, tablero, { hoy = null, alCambiar = () => {} } =
           boton.textContent = texto;
           tarjeta.append(boton);
         }
+        if (nombre === "Por hacer" && tablero.buscar(Number(tarjeta.dataset.id)).limite) tarjeta.append(crearBoton("Renombrar y empezar", "renombrar"));
       }
     }
-
     const resumen = tablero.resumen(ahora);
     const total = resumen.porHacer + resumen.enCurso + resumen.hecho;
     const hechas = resumen.hecho;
@@ -124,6 +124,18 @@ export function iniciarApp(raiz, tablero, { hoy = null, alCambiar = () => {} } =
     cambiar(accion, idTarjeta);
   });
 
+  delegar(columnas, "submit", "form", (formulario, evento) => {
+    evento.preventDefault();
+    const tarea = tablero.buscar(Number(formulario.closest(".tarjeta").dataset.id));
+    const accion = formulario.closest("button").dataset.accion
+    const valor = formulario.elements.titulo.value.trim();
+    const mensaje = revisar(valor, tarea, tablero, hoy ?? new Date());
+    mostrarErrores(formulario, { titulo: mensaje });
+    if (mensaje === "") {
+      cambiar(accion, aplicar(tablero, tarea, valor) );
+    }
+  });
+
   function cambiar(accion, idTarjeta) {
     try {
       if (accion === "empezar") {
@@ -132,8 +144,14 @@ export function iniciarApp(raiz, tablero, { hoy = null, alCambiar = () => {} } =
         tablero.mover(idTarjeta, "Por hacer");
       } else if (accion === "completar") {
         tablero.completar(idTarjeta);
+      } else if (accion === "renombrar") {
+        columnas.querySelector("form")?.remove()
+        const tarea = tablero.buscar(idTarjeta);
+        crearFormulario(tarea)
+      } else if (accion === "cancelar") {
+        return columnas.querySelector("form")?.remove();
       }
-
+      
       avisar("");
       pintar();
       alCambiar(tablero);
@@ -162,6 +180,53 @@ export function iniciarApp(raiz, tablero, { hoy = null, alCambiar = () => {} } =
   });
   pintar();
   return { pintar };
+}
+
+function revisar(valor, tarea, tablero, hoy) {
+  if(valor === null || valor > 80) {
+    return "Escribe un titulo de 1 a 80 caracteres"
+  }
+  for(const columna of tablero.COLUMNAS) {
+    const tareas = tablero.columna(columna).tareas
+    for(const tareaDe of tareas) {
+      if(tareaDe.titulo === tarea.titulo) {
+        return "Ya hay una tarea con ese titulo"
+      }
+    }
+  }
+  if(tablero.columna("En curso").llena()) {
+    avisar("'En curso' está llena")
+  }
+  return "";
+}
+
+function aplicar(tablero, tarea, valor) {
+  tablero.mover(tarea.id, "En curso");
+  tarea.titulo = valor;
+
+  return tarea.id
+}
+function crearBoton(texto, accion) {
+    const boton = document.createElement("button");
+    boton.type = "button";
+    boton.dataset.accion = accion;
+    boton.textContent = texto;
+
+    return boton;
+}
+
+const crear = (etiqueta, datos) => Object.assign(document.createElement(etiqueta), datos);
+
+function crearFormulario(tarea) {
+  const form = crear("form", { noValidate: true });
+  form.dataset.form = "renombrar";
+  const etiqueta = crear("label", { textContent: `Título nuevo de «${tarea.titulo}»` });
+  etiqueta.append(crear("input", { name: "titulo", type: "text", value: tarea.titulo }));
+  const error = crear("p", { className: "error" });
+  error.dataset.errorDe = "titulo";
+  const enviar = crear("button", { type: "submit", textContent: "Guardar" });
+  form.append(etiqueta, error, enviar, crearBoton("Cancelar", "cancelar"));
+  return form;
 }
 
 (void ACCIONES, ErrorTablero, delegar, leerFormulario, mostrarErrores, pintarLista); // (borra esta línea cuando los uses)
