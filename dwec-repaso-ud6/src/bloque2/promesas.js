@@ -21,7 +21,9 @@ export function stockDe(pieza, consultarStock) {
 //        otra promesa con { id: "m1", nombre: "Lucía" }. Devuelve una promesa con el NOMBRE del mecánico de esa reparación.
 //        (pista: si un then devuelve una promesa, el siguiente then recibe su valor; y con llaves, hace falta return)
 export function nombreDelMecanico(id, buscarReparacion, buscarMecanico) {
-  throw new Error("Sin hacer");
+  return buscarReparacion(id)
+    .then((meca) => buscarMecanico(meca.mecanico))
+    .then((m) => m.nombre)
 }
 
 // ✍️ TU TURNO ─────────────────────────────────────────────────────────────────
