@@ -12,7 +12,7 @@ export function esperar(ms) {
 // 🪜 1 · Una promesa que, pasados `ms` milisegundos, se cumple con el texto del aviso de recogida:
 //        avisoDeRecogida({ cliente: "Ana", bici: "BH" }, 50) → (a los 50 ms) "Ana: tu BH está lista"
 export function avisoDeRecogida(reparacion, ms) {
-  throw new Error("Sin hacer");
+  return esperar(ms).then(() => `${reparacion.cliente}: tu ${reparacion.bici} está lista`)
 }
 
 // ✍️ TU TURNO ─────────────────────────────────────────────────────────────────
@@ -21,7 +21,14 @@ export function avisoDeRecogida(reparacion, ms) {
 //        han salido (que no tiene por qué ser el del array).
 //        programarAvisos([{ ms: 60, texto: "B" }, { ms: 20, texto: "A" }]) → escribe A, luego B → se cumple con ["A", "B"]
 export function programarAvisos(avisos) {
-  throw new Error("Sin hacer");
+  const avisosSalidos = [];
+  const promesas = avisos.map((aviso) => 
+    esperar(aviso.ms).then(() => {
+      console.log(aviso.texto);
+      avisosSalidos.push(aviso.texto);
+    })
+  )  
+  return Promise.all(promesas).then(() => avisosSalidos);
 }
 
 // ✍️ 2 · Un aviso que se puede cancelar. Devuelve un objeto { promesa, cancelar }:
@@ -29,5 +36,16 @@ export function programarAvisos(avisos) {
 //        - cancelar(): para el temporizador (clearTimeout) y la promesa se RECHAZA con new Error("Cancelado").
 //          Si ya se había cumplido, cancelar() no hace nada.
 export function cancelable(ms, valor) {
-  throw new Error("Sin hacer");
+  let cancelar;
+  const promesa = new Promise((resolve, reject) => {
+    const tiempo = setTimeout(() => resolve(valor), ms)
+    cancelar = () => {
+      clearTimeout(tiempo);
+      reject(new Error("Cancelado"))
+    }
+  })
+  return {
+    promesa,
+    cancelar
+  }
 }
