@@ -1,0 +1,5 @@
+[
+  { "ref": "P-1", "nombre": "Cadena 11v", "precio": 18 },
+  { "ref": "P-2", "nombre": "Cámara 29", "precio": 6.5 },
+  { "ref": "P-3", "nombre": "Pastillas de freno", "precio": 14 }
+]

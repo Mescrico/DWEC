@@ -1,0 +1,6 @@
+[
+  { "ref": "R-101", "cliente": "Ana", "bici": "BH Ultimate", "horas": 2, "urgente": true },
+  { "ref": "R-102", "cliente": "Luis", "bici": "Orbea Alma", "horas": 1 },
+  { "ref": "R-103", "cliente": "", "bici": "Trek", "horas": 1 },
+  { "ref": "R-104", "cliente": "Eva", "bici": "Brompton", "horas": 0.5 }
+]
