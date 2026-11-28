@@ -17,7 +17,7 @@ export async function estadoDe(url, fetchFn = fetch) {
 // 🪜 1 · Las opciones de fetch para ENVIAR `datos` en JSON con un POST:
 //        opcionesPOST({ id: 7 }) → { method: "POST", headers: { "Content-Type": "application/json" }, body: '{"id":7}' }
 export function opcionesPOST(datos) {
-  throw new Error("Sin hacer");
+  return { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(datos)}
 }
 
 // ✍️ TU TURNO ─────────────────────────────────────────────────────────────────
@@ -25,7 +25,18 @@ export function opcionesPOST(datos) {
 //        - la respuesta llega pero NO es ok (404, 500…): new ErrorTaller(`HTTP ${status} en ${url}`, { status, url });
 //        - fetch se rechaza (sin red): new ErrorTaller("Sin conexión con el servidor", { url }).
 export async function pedirJSON(url, fetchFn = fetch) {
-  throw new Error("Sin hacer");
+  let res;
+  try {
+    res = await fetchFn(url);
+  } catch (error) {
+    throw new ErrorTaller("Sin conexión con el servidor", { url })
+  }
+  const status = res.status
+  if (!res.ok) {
+    throw new ErrorTaller(`HTTP ${status} en ${url}`, { status, url })
+  }
+  return res.json()
+
 }
 
 // ✍️ 2 · Envía una reparación TERMINADA al programa de facturas con un POST (usa opcionesPOST).
@@ -34,7 +45,16 @@ export async function pedirJSON(url, fetchFn = fetch) {
 //        - Si la respuesta no es ok: new ErrorTaller(`HTTP ${status} en ${url}`, { status, url }).
 //        - Devuelve lo que responde el servidor (en JSON), p. ej. { ticket: "T-7" }.
 export async function enviarReparacion(reparacion, url, fetchFn = fetch) {
-  throw new Error("Sin hacer");
+  if(reparacion.estado != "lista") {
+    throw new ErrorEstado(reparacion.id, reparacion.estado);
+  }
+  const { id, cliente, bici, tipo, total } = reparacion
+  const res = await fetchFn(url, opcionesPOST({id, cliente, bici, tipo, total}))
+  const status = res.status
+  if(!res.ok) {
+    throw new ErrorTaller(`HTTP ${status} en ${url}`, { status, url })
+  }
+  return res.json()
 }
 
 // ✍️ 3 · Los cuatro estados. Llama a pintar(estado):
@@ -46,7 +66,30 @@ export async function enviarReparacion(reparacion, url, fetchFn = fetch) {
 //           { estado: "error", mensaje: "El proveedor tarda demasiado" }.
 //        Si haces el ➕ 4, pedirJSON no te vale (no deja pasar el signal): llama a fetchFn tú mismo.
 export async function cargarCatalogo(url, pintar, { fetchFn = fetch, limite = 3000 } = {}) {
-  throw new Error("Sin hacer");
+  pintar({ estado: "cargando"});
+  const controlador = new AbortController();
+  const reloj = setTimeout(() => controlador.abort(), limite);
+  try {
+    const res = await fetchFn(url, { signal: controlador.signal});
+    const status = res.status;
+    if(!res.ok) throw new Error(`HTTP ${status} en ${url}`);
+    const piezas = await res.json();
+    if(piezas.length === 0) {
+      pintar({ estado: "vacio"})
+    } else {
+      pintar({ estado: "datos", piezas })
+    }
+  } catch (error) {
+    let mensaje;
+    if(error.name === "AbortError") {
+      mensaje = "El proveedor tarda demasiado"
+    } else {
+      mensaje = error.message;
+    }
+    pintar({ estado: "error", mensaje})
+  } finally {
+    clearTimeout(reloj)
+  }
 }
 
 // ✍️ 4 · Del JSON a instancias del modelo. La URL devuelve un array de objetos planos:
@@ -55,5 +98,20 @@ export async function cargarCatalogo(url, pintar, { fetchFn = fetch, limite = 30
 //        Los que no son válidos (el constructor lanza) se saltan sin parar los demás.
 //        Si la petición falla, se rechaza (usa tu pedirJSON).
 export async function traerReparaciones(url, fetchFn = fetch) {
-  throw new Error("Sin hacer");
+  const datos = await pedirJSON(url, fetchFn);
+  const reparaciones = [];
+  for (const d of datos) {
+    try {
+      if("urgente" in d) {
+        const clase = new ReparacionUrgente(d.cliente, d.bici, d.horas, {id: d.id, entrada: d.entrada})
+        reparaciones.push(clase)
+      } else {
+        const clase = new Reparacion(d.cliente, d.bici, d.horas, {id: d.id, entrada: d.entrada})
+        reparaciones.push(clase)
+      }
+    } catch (error) {
+
+    }
+  }
+  return reparaciones;
 }
