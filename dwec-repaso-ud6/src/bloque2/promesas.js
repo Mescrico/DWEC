@@ -32,14 +32,24 @@ export function nombreDelMecanico(id, buscarReparacion, buscarMecanico) {
 //        const stock = promisificar(consultarStock);   stock("Cadena") → promesa con las unidades
 //        (pista: (...args) => new Promise(…) y, dentro, fn(...args, (error, valor) => …))
 export function promisificar(fn) {
-  throw new Error("Sin hacer");
+  return (...args) => {
+    return new Promise((resolve, reject) => {
+      fn(...args, (error, valor) => {
+        if (error) reject(error);
+        else resolve(valor);
+      })
+    })
+  }
 }
 
 // ✍️ 2 · Una promesa que hace lo mismo que `promesa`, pero si tarda más de `ms`, se rechaza con
 //        new ErrorTaller("Tiempo agotado", { ms }). Si `promesa` falla antes, el error es el SUYO.
 //        (pista: Promise.race entre la promesa y otra que se rechaza a los ms milisegundos)
 export function conTiempoLimite(promesa, ms) {
-  throw new Error("Sin hacer");
+  const otra = new Promise((resolve, reject) => {
+    setTimeout(() => reject(new ErrorTaller("Tiempo agotado", {ms})), ms)
+  })
+  return Promise.race([promesa, otra])
 }
 
 // ✍️ 3 · Pedir el precio de una pieza a varios proveedores A LA VEZ y quedarse con el más barato.
@@ -48,5 +58,23 @@ export function conTiempoLimite(promesa, ms) {
 //        Si fallan TODOS, se rechaza con new ErrorTaller("Ningún proveedor responde", { pieza }).
 //        Un proveedor que falla NO estropea a los demás: ¿Promise.all o Promise.allSettled?
 export function compararProveedores(pieza, proveedores) {
-  throw new Error("Sin hacer");
+  const nombres = Object.keys(proveedores)
+  return Promise.allSettled(nombres.map((n) => proveedores[n](pieza))).then((todos) => {
+    const sinRespuesta = [];
+    let barato = null;
+    for(let i = 0; i < todos.length; i++) {
+      const nombre = nombres[i]
+      const resultado = todos[i]
+      if (resultado.status === "fulfilled") {
+        if (barato === null || barato.precio > resultado.value) {
+          barato = {"proveedor": nombre, "precio": resultado.value}
+        }
+      } else if(resultado.status === "rejected") sinRespuesta.push(nombre);
+    }
+    if (barato === null) {
+      throw new ErrorTaller("Ningún proveedor responde", {pieza})
+    } else {
+      return { ...barato, sinRespuesta }
+    }
+  })
 }
